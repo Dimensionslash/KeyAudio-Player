@@ -3,7 +3,7 @@ import pygame
 import keyboard
 
 # Set sound directory
-sound_dir = r'C:\tmp'
+sound_dir = r'C:\tmp' # replace with the true path of your directory that the Amp3 to Zmp3 is located at
 
 # Initialize pygame
 pygame.mixer.init()
@@ -27,6 +27,7 @@ else:
 
 # Handle keyboard input
 active_sounds = {}
+key_status = {}  # To track the key status (pressed/released)
 
 while True:
     try:
@@ -35,13 +36,17 @@ while True:
 
         for letter in range(ord('a'), ord('z')+1):
             if keyboard.is_pressed(chr(letter)):
-                filename = f'{chr(letter)}.mp3'
-                filepath = os.path.join(sound_dir, filename)
+                if letter not in key_status or not key_status[letter]:
+                    filename = f'{chr(letter)}.mp3'
+                    filepath = os.path.join(sound_dir, filename)
 
-                if letter not in active_sounds or not active_sounds[letter]:
                     pygame.mixer.music.load(filepath)
                     pygame.mixer.music.play()
                     active_sounds[letter] = True
+
+                key_status[letter] = True
+            else:
+                key_status[letter] = False
 
     except KeyboardInterrupt:
         break
@@ -57,3 +62,4 @@ pygame.mixer.music.stop()
 pygame.mixer.quit()
 
 print("Exiting")
+
